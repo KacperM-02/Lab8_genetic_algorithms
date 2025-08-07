@@ -24,7 +24,7 @@ def task_1():
         print("Best individuals: ", parent_1, parent_2)
 
         if best_fitness_rate >= 10:
-            return generation
+            break
 
         # crossover
         crossover_index = np.random.randint(10)
@@ -39,9 +39,9 @@ def task_1():
         child_2 = np.concatenate((parent_2_left_part, parent_1_right_part))
 
         # mutation
-        mutation_rate = np.random.randint(101)
-        if mutation_rate >= 60:
-            mutation_index = np.random.randint(10)
+        mutation_rate = np.random.randint(100)
+        if mutation_rate < 60:
+            mutation_index = np.random.randint(1, 9)
             child_1[mutation_index] = 1 - child_1[mutation_index]
             child_2[mutation_index] = 1 - child_2[mutation_index]
 
