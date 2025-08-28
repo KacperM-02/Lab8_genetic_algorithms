@@ -24,6 +24,7 @@ def task_2():
             fitness_rate = 1 / (difference + 1)
             fitness_rates[row] = fitness_rate
 
+        # roulette selection
         # division into sections
         fitness_rates_sum = fitness_rates.sum()
         probability_rates = np.array([rate/fitness_rates_sum for rate in fitness_rates])
@@ -34,7 +35,7 @@ def task_2():
             else:
                 probability_sections.append(probability_sections[i-1] + probability)
 
-        # roulette selection
+        # creating new population
         new_population = np.empty((10, 8), dtype=int)
         for roulette in range(10):
             random_number = np.random.random()
@@ -43,10 +44,10 @@ def task_2():
                 found_section = False
 
                 if i == 0:
-                    if 0 <= random_number < probability_sections[i]:
+                    if 0 < random_number <= probability_sections[i]:
                         found_section = True
                 else:
-                    if probability_sections[i - 1] <= random_number < probability_sections[i]:
+                    if probability_sections[i - 1] < random_number <= probability_sections[i]:
                         found_section = True
 
                 if found_section:
