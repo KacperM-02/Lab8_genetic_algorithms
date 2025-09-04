@@ -52,29 +52,23 @@ def task_4():
                 distance = np.linalg.norm(city_1 - city_2)
                 total_distance += distance
 
-                if i == len(chromosome) - 2:
-                    city_1_index = chromosome[-1]
-                    city_2_index = chromosome[0]
+            city_1_index = chromosome[-1]
+            city_2_index = chromosome[0]
 
-                    city_1 = np.array(cities[city_1_index])
-                    city_2 = np.array(cities[city_2_index])
+            city_1 = np.array(cities[city_1_index])
+            city_2 = np.array(cities[city_2_index])
 
-                    distance = np.linalg.norm(city_1 - city_2)
-                    total_distance += distance
+            distance = np.linalg.norm(city_1 - city_2)
+            total_distance += distance
 
             fitness_rates[row] = total_distance
             if total_distance <= 869:
                 print(f"Total distance: {total_distance}, route: {chromosome}")
 
 
-        # find 2 best individuals - elite
+        # find 20 best individuals - elite
         sorted_fitness_rates_indices = np.argsort(fitness_rates)
-
-        elite_1_index = sorted_fitness_rates_indices[-1]
-        elite_2_index = sorted_fitness_rates_indices[-2]
-
-        elite_1 = population[elite_1_index]
-        elite_2 = population[elite_2_index]
+        elite = population[sorted_fitness_rates_indices[:20]]
 
         # roulette selection
         # counting probability rates
@@ -89,9 +83,10 @@ def task_4():
             else:
                 probability_sections.append(probability_sections[i-1] + probability)
 
-        # choosing parents for crossover: 7 parents -> 6 children + 2 elite = 8 individuals
-        crossover_parents = np.empty((7, 10), dtype=int)
-        for roulette in range(7):
+        # choosing parents for crossover
+        # 81 parents -> 80 children (80%) + 20 elite (20%) = 100 individuals - new population
+        crossover_parents = np.empty((81, 25), dtype=int)
+        for roulette in range(81):
             random_number = np.random.random()
 
             for i in range(len(probability_sections)):
@@ -109,9 +104,9 @@ def task_4():
                     break
 
         # crossover
-        new_population = np.empty((8, 10), dtype=int)
+        new_population = np.empty((100, 25), dtype=int)
         for i in range(len(crossover_parents) - 1):
-            crossover_index = np.random.randint(1, 9)
+            crossover_index = np.random.randint(1, 24)
 
             parent_1 = crossover_parents[i]
             parent_2 = crossover_parents[i + 1]
@@ -122,12 +117,12 @@ def task_4():
             child = np.concatenate((parent_1_left_part, parent_2_right_part))
             new_population[i] = child
 
-        # mutation
-        for i in range(6):
-            for j in range(10):
+        # mutation (80 children for mutation)
+        for i in range(80):
+            for j in range(25):
                 mutation_rate = np.random.random()
 
-                if mutation_rate < 0.05:
+                if mutation_rate < 0.01:
                     new_population[i][j] = 1 - new_population[i][j]
 
         new_population[-1] = elite_1
