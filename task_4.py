@@ -103,20 +103,32 @@ def task_4():
                     crossover_parents[roulette] = population[i]
                     break
 
-        # crossover
+        # order crossover
         new_population = np.empty((100, 25), dtype=int)
         for i in range(len(crossover_parents) - 1):
-            crossover_index = np.random.randint(1, 24)
+            crossover_indices = np.sort(np.random.choice(24, size=2, replace=False) + 1)
 
             parent_1 = crossover_parents[i]
-            parent_2 = crossover_parents[i + 1]
+            parent_2 = crossover_parents[i + 1].tolist()
 
-            parent_1_left_part = parent_1[:crossover_index]
-            parent_2_right_part = parent_2[crossover_index:]
+            child = np.ones(25, dtype=int) * -1
+            for j in range(crossover_indices[0], crossover_indices[1]):
+                child[j] = parent_1[j]
 
-            child = np.concatenate((parent_1_left_part, parent_2_right_part))
+            for j, city in enumerate(child):
+                if city != -1:
+                    continue
+
+                for _ in parent_2:
+                    new_city = parent_2.pop(0)
+
+                    if new_city not in child:
+                        child[j] = new_city
+                        break
+
             new_population[i] = child
 
+        # TODO: change mutation method
         # mutation (80 children for mutation)
         for i in range(80):
             for j in range(25):
@@ -125,6 +137,7 @@ def task_4():
                 if mutation_rate < 0.01:
                     new_population[i][j] = 1 - new_population[i][j]
 
+        # TODO: change 20 individuals in new population - elite
         new_population[-1] = elite_1
         new_population[-2] = elite_2
         population = new_population
