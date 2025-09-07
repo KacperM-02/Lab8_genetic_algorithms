@@ -128,14 +128,21 @@ def task_4():
 
             new_population[i] = child
 
-        # TODO: change mutation method
         # mutation (80 children for mutation)
-        for i in range(80):
-            for j in range(25):
+        for chromosome in range(80):
+            for gene in range(25):
                 mutation_rate = np.random.random()
 
                 if mutation_rate < 0.01:
-                    new_population[i][j] = 1 - new_population[i][j]
+                    current_city = new_population[chromosome][gene]
+
+                    valid_cities_indices = np.delete(np.arange(25), current_city)
+                    choice = np.random.choice(valid_cities_indices)
+                    choice_index = np.where(new_population[chromosome] == choice)
+
+                    new_population[chromosome][gene] = choice
+                    new_population[chromosome][choice_index] = current_city
+
 
         # TODO: change 20 individuals in new population - elite
         new_population[-1] = elite_1
