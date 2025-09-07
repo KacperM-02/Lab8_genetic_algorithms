@@ -35,7 +35,7 @@ def task_4():
     generation = 0
 
     while True:
-        print("Generation: ", generation)
+        # print("Generation: ", generation)
 
         # fitness function
         fitness_rates = np.empty(100)
@@ -64,11 +64,13 @@ def task_4():
             fitness_rates[row] = total_distance
             if total_distance <= 869:
                 print(f"Total distance: {total_distance}, route: {chromosome}")
-
+                return
 
         # find 20 best individuals - elite
         sorted_fitness_rates_indices = np.argsort(fitness_rates)
         elite = population[sorted_fitness_rates_indices[:20]]
+        if generation % 100 == 0:
+            print(f"Generation: {generation}\nBest distance: {fitness_rates[sorted_fitness_rates_indices[0]]}\nRoute:{population[sorted_fitness_rates_indices[0]]}")
 
         # roulette selection
         # counting probability rates
@@ -112,19 +114,16 @@ def task_4():
             parent_2 = crossover_parents[i + 1].tolist()
 
             child = np.ones(25, dtype=int) * -1
-            for j in range(crossover_indices[0], crossover_indices[1]):
-                child[j] = parent_1[j]
+            child[crossover_indices[0]:crossover_indices[1]] = parent_1[crossover_indices[0]:crossover_indices[1]]
 
-            for j, city in enumerate(child):
-                if city != -1:
-                    continue
+            for j in range(25):
+                if child[j] == -1:
+                    while parent_2:
+                        new_city = parent_2.pop(0)
 
-                for _ in parent_2:
-                    new_city = parent_2.pop(0)
-
-                    if new_city not in child:
-                        child[j] = new_city
-                        break
+                        if new_city not in child:
+                            child[j] = new_city
+                            break
 
             new_population[i] = child
 
@@ -144,9 +143,7 @@ def task_4():
                     new_population[chromosome][choice_index] = current_city
 
 
-        # TODO: change 20 individuals in new population - elite
-        new_population[-1] = elite_1
-        new_population[-2] = elite_2
+        new_population[80:100] = elite
         population = new_population
         generation += 1
 
