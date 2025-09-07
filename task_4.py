@@ -35,8 +35,6 @@ def task_4():
     generation = 0
 
     while True:
-        # print("Generation: ", generation)
-
         # fitness function
         fitness_rates = np.empty(100)
         for row, chromosome in enumerate(population):
